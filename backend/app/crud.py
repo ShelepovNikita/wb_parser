@@ -9,7 +9,7 @@ def delete_product(db: Session, db_product: schemas.Product) -> dict:
     """Удаление товара."""
     db.delete(db_product)
     db.commit()
-    return {"ok": True}
+    return {"detail": "Success"}
 
 
 def get_product_by_nm_id(db: Session, nm_id: int):

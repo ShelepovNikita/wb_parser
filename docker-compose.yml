@@ -1,14 +1,36 @@
 version: '3.9'
 
 services:
+
   parser_wb_app:
     container_name: parser_wb_container
-    build: app
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
     command: uvicorn app.main:app --host 0.0.0.0 --port 80
+    env_file:
+      - .env    
     ports:
       - 80:80
     depends_on:
       - parser_wb_database
+    networks:
+      - network
+
+  parser_wb_bot:
+    container_name: parser_wb_bot_container
+    build: 
+      context: ./bot
+      dockerfile: Dockerfile
+    command: uvicorn app.main:app --host 0.0.0.0 --port 90
+    env_file:
+      - .env
+    ports:
+      - 90:90
+    networks:
+      - network
+    depends_on:
+      - parser_wb_app
 
   parser_wb_database:
     container_name: parser_wb_database_container
@@ -17,10 +39,11 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data/
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=postgres
-
+    env_file:
+      - .env
+    networks:
+      - network
+networks:
+  network:
 volumes:
   postgres_data:

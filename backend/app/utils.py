@@ -3,7 +3,6 @@
 import json
 
 import requests
-
 from app import models
 
 
@@ -22,10 +21,14 @@ def request_to_wb(nm_id) -> json:
     response = requests.get(
         "https://card.wb.ru/cards/v1/detail", params=params
     )
-    return json.loads(response.text)
+    data = json.loads(response.text)
+    if len(data.get("data").get("products")) != 0:
+        return json.loads(response.text)
+    else:
+        return {"detail": "product not found"}
 
 
-def request_to_wb_get_quantity(nm_id) -> int:
+def request_to_wb_get_quantity(nm_id) -> int | None:
     """Запрос к ВБ на получение количества на остаток."""
     # Это костыль, но рабочий))
     basket_num: int = 20
@@ -60,9 +63,12 @@ def request_to_wb_get_quantity(nm_id) -> int:
     products = json.loads(response.text).get("data").get("products")
     for product in products:
         if str(product.get("id")) == str(nm_id):
-            quantity = product.get("sizes")[0].get("stocks")[0].get("qty")
-            break
-    return int(quantity)
+            if len(product.get("sizes")[0].get("stocks")) != 0:
+                quantity = product.get("sizes")[0].get("stocks")[0].get("qty")
+                break
+            else:
+                quantity = None
+    return quantity
 
 
 def parse_json(product_json, quantity=None) -> models.Product:
