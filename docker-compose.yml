@@ -1,0 +1,26 @@
+version: '3.9'
+
+services:
+  parser_wb_app:
+    container_name: parser_wb_container
+    build: app
+    command: uvicorn app.main:app --host 0.0.0.0 --port 80
+    ports:
+      - 80:80
+    depends_on:
+      - parser_wb_database
+
+  parser_wb_database:
+    container_name: parser_wb_database_container
+    image: postgres:12.0-alpine
+    ports: 
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+
+volumes:
+  postgres_data:
