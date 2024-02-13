@@ -140,7 +140,7 @@ def check_message(chat_id, message):
                     update_id = message["update_id"]
                     nm_id = message.get("message").get("text")
                     response = requests.delete(
-                        f"http://parser_wb_app/products/delete/{nm_id}"
+                        f"http://parser_wb_app/products/{nm_id}"
                     )
                     return send_message(
                         chat_id, pretty_answer(json.loads(response.text))
