@@ -106,6 +106,8 @@ def check_message(chat_id, message):
             "http://parser_wb_app/products/",
         )
         products = json.loads(response.text)
+        if len(products) == 0:
+            send_message(chat_id, "В базе данных нет добавленных товаров.")
         for product in products:
             send_message(chat_id, pretty_answer(product))
         return
