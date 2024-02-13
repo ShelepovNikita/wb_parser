@@ -63,7 +63,7 @@ def get_product_by_nm_id(
     return db_product
 
 
-@app.delete("/products/{nm_id}/")
+@app.delete("/products/delete/{nm_id}/")
 def delete_product_by_nm_id(nm_id: int, db: Session = Depends(get_db)):
     """Эндпоинт на удаление товара из БД по nm_id."""
     db_product = crud.get_product_by_nm_id(db, nm_id=nm_id)
