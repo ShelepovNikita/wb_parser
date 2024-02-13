@@ -108,8 +108,9 @@ def check_message(chat_id, message):
         products = json.loads(response.text)
         if len(products) == 0:
             send_message(chat_id, "В базе данных нет добавленных товаров.")
-        for product in products:
-            send_message(chat_id, pretty_answer(product))
+        else:
+            for product in products:
+                send_message(chat_id, pretty_answer(product))
         return
     elif message == "/get_product":
         send_message(chat_id, "Ожидание ввода nm_id ....")
