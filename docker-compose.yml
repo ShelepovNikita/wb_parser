@@ -7,11 +7,11 @@ services:
     build: 
       context: ./backend
       dockerfile: Dockerfile
-    command: uvicorn app.main:app --host 0.0.0.0 --port 80
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8080
     env_file:
-      - .env    
+      - .env
     ports:
-      - 80:80
+      - 8080:8080
     depends_on:
       - parser_wb_database
     networks:
@@ -22,11 +22,9 @@ services:
     build: 
       context: ./bot
       dockerfile: Dockerfile
-    command: uvicorn app.main:app --host 0.0.0.0 --port 90
+    command: python app/main.py
     env_file:
       - .env
-    ports:
-      - 90:90
     networks:
       - network
     depends_on:

@@ -2,15 +2,15 @@
 
 import time
 import json
+
 import os
 
-from fastapi import FastAPI
 import requests
+
 from dotenv import load_dotenv
 
 load_dotenv()
 
-app = FastAPI()
 
 URL = "https://api.telegram.org/"
 TOKEN = os.environ.get("TOKEN")
@@ -94,7 +94,7 @@ def check_message(chat_id, message):
                 if update_id < message["update_id"]:
                     update_id = message["update_id"]
                     response = requests.post(
-                        "http://parser_wb_app/products/",
+                        "http://parser_wb_app:8080/products/",
                         json={"nm_id": message.get("message").get("text")},
                     )
                     return send_message(
@@ -103,7 +103,7 @@ def check_message(chat_id, message):
 
     elif message == "/products":
         response = requests.get(
-            "http://parser_wb_app/products/",
+            "http://parser_wb_app:8080/products/",
         )
         products = json.loads(response.text)
         if len(products) == 0:
@@ -125,7 +125,7 @@ def check_message(chat_id, message):
                     update_id = message["update_id"]
                     nm_id = message.get("message").get("text")
                     response = requests.get(
-                        f"http://parser_wb_app/products/{nm_id}"
+                        f"http://parser_wb_app:8080/products/{nm_id}"
                     )
                     return send_message(
                         chat_id, pretty_answer(json.loads(response.text))
@@ -143,15 +143,14 @@ def check_message(chat_id, message):
                     update_id = message["update_id"]
                     nm_id = message.get("message").get("text")
                     response = requests.delete(
-                        f"http://parser_wb_app/products/delete/{nm_id}"
+                        f"http://parser_wb_app:8080/products/delete/{nm_id}"
                     )
                     return send_message(
                         chat_id, pretty_answer(json.loads(response.text))
                     )
 
 
-@app.on_event("startup")
-async def on_startup():
+def main():
     """Запуск проверки обновлений бесконечным циклом."""
     update_id = 0
     if _update := get_updates():
@@ -166,3 +165,7 @@ async def on_startup():
                     message["message"]["chat"]["id"],
                     message["message"]["text"],
                 )
+
+
+if __name__ == "__main__":
+    main()
